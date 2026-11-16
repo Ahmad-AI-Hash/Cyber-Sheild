@@ -1,0 +1,6 @@
+{
+  "name": "CyberShield",
+  "description": "Online Scam & Phishing Awareness Platform with URL risk analysis, AI scam message detection, bilingual Urdu/English safety guidelines, and security tools.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
