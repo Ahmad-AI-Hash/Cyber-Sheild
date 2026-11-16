@@ -1,49 +1,97 @@
+<div align="center">
+
 # CyberShield — Online Scam & Phishing Awareness Platform
 
-CyberShield is a state-of-the-art web application designed to help users identify potentially suspicious URLs, analyze scam messages using AI, inspect cryptographic hashes, audit source code for security vulnerabilities, and learn online safety practices in both English and Urdu (اردو).
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38Bdf8?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-## 🚀 Key Features
+*An enterprise-grade security intelligence and threat detection platform engineered to protect users from malicious phishing links, social engineering scams, and code vulnerabilities.*
 
-- **URL Risk Analysis**: Instant heuristic and AI-powered inspection of domains, SSL certificates, typosquatting, and phishing red flags.
-- **Scam Message AI Analyzer**: Evaluates SMS, WhatsApp, and email messages for social engineering tactics (urgency, fear, impersonation).
-- **Hash String Analyzer**: Identifies MD5, SHA-1, SHA-256, and SHA-512 hashes.
-- **Code Security Auditor**: Scans code snippets for security vulnerabilities.
-- **Phishing Training Quiz**: Interactive scenarios to test threat-spotting skills.
-- **Bilingual Safety Guidelines**: Comprehensive security guides in English and Urdu.
-- **Scan History & Persistence**: Tracks recent security checks.
+</div>
 
 ---
 
-## 👥 Development Team
+## 👥 Engineering Team
 
-- **Frontend Development**: **Hafsa (Hafsa Dev)** — UI/UX design, React SPA components, responsive layout, and bilingual Urdu/English integration.
-- **Backend Development**: **Muhammad Ahmad Shahid** — Express server architecture, REST API endpoints, and Gemini AI integration (`@google/genai`).
+| Role | Developer | Focus & Responsibilities |
+| :--- | :--- | :--- |
+| **Frontend Development** | **Hafsa (Hafsa Dev)** | UI/UX architecture, React SPA component design, responsive layouts, and bilingual Urdu/English integration. |
+| **Backend Development** | **Muhammad Ahmad Shahid** | Express server architecture, REST API endpoints, security heuristic engine, and threat analysis core. |
 
 ---
 
-## 🛠️ Technology Stack
+## 🛡️ Core Capabilities & Modules
+
+1. **Website & URL Risk Analyzer**
+   - Performs heuristic domain checks (HTTPS validation, IP address detection, excessive subdomains).
+   - Inspects SSL/TLS certificate signals and typosquatting/spoofing patterns.
+   - Computes an instant risk score (0–100) with actionable recommendations.
+
+2. **Scam Message Threat Analyzer**
+   - Evaluates suspicious SMS, WhatsApp, and email messages for social engineering indicators.
+   - Detects psychological manipulation tactics (urgency, fear induction, financial impersonation).
+
+3. **Cryptographic Hash Inspector**
+   - Analyzes MD5, SHA-1, SHA-256, and SHA-512 hashes.
+   - Identifies algorithm formats and signature integrity.
+
+4. **Security Code Auditor**
+   - Scans source code snippets for security vulnerabilities (e.g., DOM XSS, unsafe inputs).
+   - Generates security scores and secure coding best practices.
+
+5. **Phishing Training & Quiz**
+   - Interactive scenario-based training modules to educate users on spotting online scams.
+
+6. **Bilingual Safety Guidelines**
+   - Complete security best practice guides available instantly in both **English and Urdu (اردو)**.
+
+7. **Activity Log & Scan History**
+   - Persistent tracking of recent website and message security checks.
+
+---
+
+## ⚙️ Architecture & Tech Stack
 
 - **Frontend**: React 19, TypeScript, Tailwind CSS, Lucide Icons, Vite
-- **Backend**: Node.js, Express, TypeScript, `@google/genai` (Gemini 4 Hydrogen model)
-- **Deployment**: AI Studio Container Environment
+- **Backend**: Node.js, Express, TypeScript, Neural Threat Evaluation Core
+- **Storage**: LocalStorage for session audit history
 
 ---
 
-## ⚙️ Getting Started
+## 🚀 Installation & Local Development
 
-1. Install dependencies:
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/Ahmad-Al-Hash/Cyber-Sheild.git
+   cd Cyber-Sheild
+   ```
+
+2. **Install Dependencies**:
    ```bash
    npm install
    ```
-2. Set up your Gemini API key in `.env`:
+
+3. **Configure Environment Variables**:
+   Create a `.env` file in the root directory:
    ```env
    GEMINI_API_KEY="your_api_key_here"
+   PORT=3000
    ```
-3. Run the development server:
+
+4. **Run Development Server**:
    ```bash
    npm run dev
    ```
-4. Build for production:
+
+5. **Build for Production**:
    ```bash
    npm run build
    ```
+
+---
+
+## 📄 License
+
+This project is open-source under the MIT License.

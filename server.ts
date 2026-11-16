@@ -9,8 +9,8 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-const apiKey = process.env.GEMINI_API_KEY;
-const ai = apiKey ? new GoogleGenAI({ apiKey, httpOptions: { headers: { 'User-Agent': 'aistudio-build' } } }) : null;
+const secretKey = process.env.GEMINI_API_KEY;
+const neuralEngine = secretKey ? new GoogleGenAI({ apiKey: secretKey, httpOptions: { headers: { 'User-Agent': 'cybershield-security-core' } } }) : null;
 
 // API Endpoints
 app.post('/api/analyze-url', async (req, res) => {
@@ -41,7 +41,7 @@ app.post('/api/analyze-url', async (req, res) => {
       reasons.push('URL has excessive subdomains, indicating potential subdomain spoofing.');
     }
 
-    let aiAnalysis = {
+    let threatAnalysis = {
       riskScore: Math.max(0, heuristicScore),
       status: heuristicScore > 75 ? 'Safe' : heuristicScore > 40 ? 'Suspicious' : 'Dangerous',
       sslInfo: lowerUrl.startsWith('https://') ? 'Valid SSL Certificate (TLS 1.3)' : 'Missing or Insecure SSL Certificate',
@@ -53,10 +53,10 @@ app.post('/api/analyze-url', async (req, res) => {
         'Never enter login credentials from links received in unsolicited messages.',
         'Look for valid SSL certificates and trusted organization seals.'
       ],
-      aiSummary: 'Standard threat assessment based on URL structure, security heuristics, and domain characteristics.'
+      summaryReport: 'Standard threat assessment based on URL structure, security heuristics, and domain characteristics.'
     };
 
-    if (ai) {
+    if (neuralEngine) {
       try {
         const prompt = `Analyze this URL for phishing and online scams: "${url}". Return a JSON object with:
         - riskScore (number 0-100, where 100 is completely safe and 0 is high risk phishing/malware)
@@ -66,9 +66,9 @@ app.post('/api/analyze-url', async (req, res) => {
         - typosquattingCheck (string analyzing if domain imitates a known brand)
         - redFlags (array of strings detailing detected risks)
         - recommendations (array of security advice strings)
-        - aiSummary (string summary of the threat level)`;
+        - summaryReport (string summary of the threat level)`;
 
-        const response = await ai.models.generateContent({
+        const response = await neuralEngine.models.generateContent({
           model: 'gemini-4-hydrogen',
           contents: prompt,
           config: {
@@ -78,14 +78,14 @@ app.post('/api/analyze-url', async (req, res) => {
 
         if (response.text) {
           const parsed = JSON.parse(response.text.trim());
-          aiAnalysis = { ...aiAnalysis, ...parsed };
+          threatAnalysis = { ...threatAnalysis, ...parsed };
         }
-      } catch (aiErr) {
-        console.error('Gemini URL analysis error:', aiErr);
+      } catch (analysisErr) {
+        console.error('Threat analysis evaluation error:', analysisErr);
       }
     }
 
-    res.json(aiAnalysis);
+    res.json(threatAnalysis);
   } catch (err: any) {
     res.status(500).json({ error: err.message || 'Internal server error' });
   }
@@ -107,7 +107,7 @@ app.post('/api/analyze-message', async (req, res) => {
       recommendations: ['Do not click any links', 'Contact the institution directly through official phone numbers']
     };
 
-    if (ai) {
+    if (neuralEngine) {
       try {
         const prompt = `Analyze this suspicious text message, SMS, WhatsApp message, or email for scam/phishing indicators: "${message}". Return a JSON object with:
         - threatLevel ("Low", "Medium", or "High")
@@ -117,7 +117,7 @@ app.post('/api/analyze-message', async (req, res) => {
         - redFlags (array of specific red flags found)
         - recommendations (array of safety recommendations)`;
 
-        const response = await ai.models.generateContent({
+        const response = await neuralEngine.models.generateContent({
           model: 'gemini-4-hydrogen',
           contents: prompt,
           config: {
@@ -129,8 +129,8 @@ app.post('/api/analyze-message', async (req, res) => {
           const parsed = JSON.parse(response.text.trim());
           result = { ...result, ...parsed };
         }
-      } catch (aiErr) {
-        console.error('Gemini message analysis error:', aiErr);
+      } catch (analysisErr) {
+        console.error('Message evaluation error:', analysisErr);
       }
     }
 
@@ -152,11 +152,11 @@ app.post('/api/audit-code', async (req, res) => {
       vulnerabilities: [
         { severity: 'Low', title: 'Inline Event Handlers', description: 'Consider moving event listeners to external scripts.' }
       ],
-      safePractices: ['Uses strict comparison operators', 'No hardcoded API secrets detected in sample'],
+      safePractices: ['Uses strict comparison operators', 'No hardcoded secrets detected in sample'],
       recommendations: ['Sanitize all user inputs before DOM insertion', 'Ensure Content Security Policy (CSP) headers are set']
     };
 
-    if (ai) {
+    if (neuralEngine) {
       try {
         const prompt = `Audit this source code snippet for security vulnerabilities, malicious patterns, or insecure coding practices: \`\`\`\n${code}\n\`\`\`. Return a JSON object with:
         - securityScore (number 0-100)
@@ -164,7 +164,7 @@ app.post('/api/audit-code', async (req, res) => {
         - safePractices (array of strings)
         - recommendations (array of strings)`;
 
-        const response = await ai.models.generateContent({
+        const response = await neuralEngine.models.generateContent({
           model: 'gemini-4-hydrogen',
           contents: prompt,
           config: {
@@ -176,8 +176,8 @@ app.post('/api/audit-code', async (req, res) => {
           const parsed = JSON.parse(response.text.trim());
           audit = { ...audit, ...parsed };
         }
-      } catch (aiErr) {
-        console.error('Gemini code audit error:', aiErr);
+      } catch (analysisErr) {
+        console.error('Code audit error:', analysisErr);
       }
     }
 
