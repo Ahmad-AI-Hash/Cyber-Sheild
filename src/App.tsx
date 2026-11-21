@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   ShieldAlert,
   ShieldCheck,
@@ -12,40 +12,20 @@ import {
   Hash,
   Code2,
   BookOpen,
-  History,
-  Settings,
   AlertTriangle,
   CheckCircle2,
-  ExternalLink,
-  Copy,
-  Check,
   Globe,
   Lock,
-  Cpu,
-  HelpCircle,
   Award,
   ArrowRight,
   RefreshCw,
-  Terminal,
-  FileText,
   Activity,
   Languages,
-  Zap,
   Shield
 } from 'lucide-react';
 
-interface ScanReport {
-  id: string;
-  type: 'url' | 'message' | 'hash' | 'code';
-  target: string;
-  timestamp: string;
-  scoreOrLevel: string | number;
-  status: 'Safe' | 'Suspicious' | 'Dangerous' | 'Low' | 'Medium' | 'High';
-  summary: string;
-}
-
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'scanner' | 'messageAI' | 'hash' | 'code' | 'quiz' | 'guidelines' | 'history'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'scanner' | 'messageAI' | 'hash' | 'code' | 'quiz' | 'guidelines'>('overview');
   const [language, setLanguage] = useState<'en' | 'ur'>('en');
 
   // URL Scanner State
@@ -53,7 +33,7 @@ export default function App() {
   const [urlLoading, setUrlLoading] = useState(false);
   const [urlResult, setUrlResult] = useState<any>(null);
 
-  // Message AI State
+  // Message Analyzer State
   const [msgInput, setMsgInput] = useState('');
   const [msgLoading, setMsgLoading] = useState(false);
   const [msgResult, setMsgResult] = useState<any>(null);
@@ -73,28 +53,6 @@ export default function App() {
   const [quizAnswered, setQuizAnswered] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
-  // Scan History
-  const [history, setHistory] = useState<ScanReport[]>(() => {
-    try {
-      const saved = localStorage.getItem('cybershield_history');
-      return saved ? JSON.parse(saved) : [
-        { id: '1', type: 'url', target: 'https://secure-login-apple-support.xyz', timestamp: '2 mins ago', scoreOrLevel: 15, status: 'Dangerous', summary: 'Phishing domain mimicking Apple ID login.' },
-        { id: '2', type: 'message', target: 'URGENT: Your bank account is locked. Click here...', timestamp: '15 mins ago', scoreOrLevel: 'High', status: 'High', summary: 'High-risk scam message demanding immediate action.' },
-        { id: '3', type: 'url', target: 'https://google.com', timestamp: '1 hour ago', scoreOrLevel: 98, status: 'Safe', summary: 'Verified secure domain with valid TLS certificate.' }
-      ];
-    } catch {
-      return [];
-    }
-  });
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('cybershield_history', JSON.stringify(history));
-    } catch (e) {
-      console.error(e);
-    }
-  }, [history]);
-
   // Handle URL Scan
   const handleUrlScan = async (e?: React.FormEvent, presetUrl?: string) => {
     if (e) e.preventDefault();
@@ -113,20 +71,8 @@ export default function App() {
       });
       const data = await res.json();
       setUrlResult(data);
-
-      const newReport: ScanReport = {
-        id: Date.now().toString(),
-        type: 'url',
-        target,
-        timestamp: 'Just now',
-        scoreOrLevel: data.riskScore,
-        status: data.status,
-        summary: data.aiSummary || 'Analyzed successfully.'
-      };
-      setHistory(prev => [newReport, ...prev]);
     } catch (err) {
       console.error(err);
-      // Fallback result
       const fallback = {
         riskScore: target.includes('secure') || target.includes('login') ? 25 : 90,
         status: target.includes('secure') || target.includes('login') ? 'Dangerous' : 'Safe',
@@ -135,7 +81,7 @@ export default function App() {
         typosquattingCheck: 'Potential lookalike domain pattern',
         redFlags: ['Deceptive keywords detected in path', 'Unverified issuer'],
         recommendations: ['Do not input personal credentials', 'Verify official company website'],
-        aiSummary: 'Heuristic security scan indicates potential deception.'
+        summaryReport: 'Heuristic security scan indicates potential deception.'
       };
       setUrlResult(fallback);
     } finally {
@@ -161,17 +107,6 @@ export default function App() {
       });
       const data = await res.json();
       setMsgResult(data);
-
-      const newReport: ScanReport = {
-        id: Date.now().toString(),
-        type: 'message',
-        target: target.substring(0, 45) + '...',
-        timestamp: 'Just now',
-        scoreOrLevel: data.threatLevel,
-        status: data.threatLevel === 'High' ? 'High' : data.threatLevel === 'Medium' ? 'Medium' : 'Low',
-        summary: data.summary || 'AI scam analysis completed.'
-      };
-      setHistory(prev => [newReport, ...prev]);
     } catch (err) {
       console.error(err);
       setMsgResult({
@@ -339,7 +274,7 @@ export default function App() {
             {language === 'en' ? 'Website Scanner' : 'ویب سائٹ اسکینر'}
           </button>
           <button onClick={() => setActiveTab('messageAI')} className={`hover:text-white transition-colors whitespace-nowrap shrink-0 ${activeTab === 'messageAI' ? 'text-teal-400 font-semibold' : ''}`}>
-            {language === 'en' ? 'Scam AI' : 'اسکام اے آئی'}
+            {language === 'en' ? 'Threat Analyzer' : 'تھریڈ تجزیہ'}
           </button>
           <button onClick={() => setActiveTab('hash')} className={`hover:text-white transition-colors whitespace-nowrap shrink-0 ${activeTab === 'hash' ? 'text-teal-400 font-semibold' : ''}`}>
             {language === 'en' ? 'Hash Analyzer' : 'ہیش تجزیہ کار'}
@@ -352,9 +287,6 @@ export default function App() {
           </button>
           <button onClick={() => setActiveTab('guidelines')} className={`hover:text-white transition-colors whitespace-nowrap shrink-0 ${activeTab === 'guidelines' ? 'text-teal-400 font-semibold' : ''}`}>
             {language === 'en' ? 'Safety Guides' : 'حفاظتی رہنما اصول'}
-          </button>
-          <button onClick={() => setActiveTab('history')} className={`hover:text-white transition-colors whitespace-nowrap shrink-0 ${activeTab === 'history' ? 'text-teal-400 font-semibold' : ''}`}>
-            {language === 'en' ? 'History' : 'تاریخچہ'}
           </button>
         </nav>
 
@@ -395,7 +327,7 @@ export default function App() {
             className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left ${activeTab === 'messageAI' ? 'bg-teal-500/10 text-teal-400 border border-teal-500/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'}`}
           >
             <MessageSquareWarning className="w-4 h-4 shrink-0" />
-            <span>{language === 'en' ? 'Scam Message AI' : 'اسکام اے آئی'}</span>
+            <span>{language === 'en' ? 'Threat Analyzer' : 'تھریڈ تجزیہ'}</span>
           </button>
           <button
             onClick={() => setActiveTab('hash')}
@@ -425,13 +357,6 @@ export default function App() {
             <BookOpen className="w-4 h-4 shrink-0" />
             <span>{language === 'en' ? 'Safety Guidelines' : 'حفاظتی رہنما اصول'}</span>
           </button>
-          <button
-            onClick={() => setActiveTab('history')}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left ${activeTab === 'history' ? 'bg-teal-500/10 text-teal-400 border border-teal-500/20' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'}`}
-          >
-            <History className="w-4 h-4 shrink-0" />
-            <span>{language === 'en' ? 'Scan History' : 'تاریخچہ'}</span>
-          </button>
         </aside>
 
         {/* Content Area */}
@@ -448,8 +373,8 @@ export default function App() {
                 </h1>
                 <p className="text-slate-400 max-w-2xl text-base">
                   {language === 'en'
-                    ? 'Check a website\'s safety signals, analyze suspicious SMS or WhatsApp messages with AI, and understand potential risks with clear, actionable security insights.'
-                    : 'کسی بھی ویب سائٹ کے سیکیورٹی سگنلز چیک کریں، مشکوک پیغامات کا اے آئی سے تجزیہ کریں اور آن لائن دھوکہ دہی سے بچیں۔'}
+                    ? 'Check a website\'s safety signals, analyze suspicious SMS or WhatsApp messages with heuristic threat engines, and understand potential risks with clear, actionable security insights.'
+                    : 'کسی بھی ویب سائٹ کے سیکیورٹی سگنلز چیک کریں، مشکوک پیغامات کا تجزیہ کریں اور آن لائن دھوکہ دہی سے بچیں۔'}
                 </p>
               </div>
 
@@ -460,7 +385,7 @@ export default function App() {
                   {language === 'en' ? 'Website Safety Check' : 'ویب سائٹ سیکیورٹی چیک'}
                 </h3>
                 <p className="text-sm text-slate-400 mb-6">
-                  {language === 'en' ? 'Enter a URL to run an instant heuristic & AI risk scan.' : 'فوری اسکین کے لیے ویب سائٹ کا URL درج کریں۔'}
+                  {language === 'en' ? 'Enter a URL to run an instant heuristic security scan.' : 'فوری اسکین کے لیے ویب سائٹ کا URL درج کریں۔'}
                 </p>
                 <form onSubmit={e => { handleUrlScan(e); setActiveTab('scanner'); }} className="flex flex-col sm:flex-row gap-3">
                   <div className="relative flex-1">
@@ -484,34 +409,23 @@ export default function App() {
               </div>
 
               {/* Stats Overview */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="bg-[#0D1526] border border-slate-800/80 rounded-2xl p-5">
                   <div className="text-slate-400 text-xs font-medium mb-1">
-                    {language === 'en' ? 'Total Submissions' : 'کل اسکین'}
+                    {language === 'en' ? 'Security Engine Status' : 'انجن کی حیثیت'}
                   </div>
-                  <div className="text-3xl font-bold font-mono text-white">{history.length}</div>
-                  <div className="text-teal-400 text-xs mt-2 flex items-center gap-1">
-                    <span>{language === 'en' ? 'Active local session' : 'فعال سیشن'}</span>
+                  <div className="text-2xl font-bold font-mono text-white">Active</div>
+                  <div className="text-teal-400 text-xs mt-2">
+                    {language === 'en' ? 'Deterministic heuristic rules online' : 'ہیورسٹک رولز فعال'}
                   </div>
                 </div>
                 <div className="bg-[#0D1526] border border-slate-800/80 rounded-2xl p-5">
                   <div className="text-slate-400 text-xs font-medium mb-1">
-                    {language === 'en' ? 'Threats Identified' : 'شناخت شدہ خطرات'}
-                  </div>
-                  <div className="text-3xl font-bold font-mono text-rose-400">
-                    {history.filter(h => h.status === 'Dangerous' || h.status === 'High').length}
-                  </div>
-                  <div className="text-rose-400/80 text-xs mt-2">
-                    {language === 'en' ? 'Blocked malicious links' : 'بلاکیڈ لنکس'}
-                  </div>
-                </div>
-                <div className="bg-[#0D1526] border border-slate-800/80 rounded-2xl p-5">
-                  <div className="text-slate-400 text-xs font-medium mb-1">
-                    {language === 'en' ? 'Threat Intelligence Engine' : 'تھریڈ انٹیلی جنس انجن'}
+                    {language === 'en' ? 'Threat Intelligence Core' : 'تھریڈ انٹیلی جنس کور'}
                   </div>
                   <div className="text-2xl font-bold font-mono text-teal-400">CyberShield v3</div>
                   <div className="text-slate-400 text-xs mt-2">
-                    {language === 'en' ? 'Neural security assessment model' : 'نیورل سیکیورٹی ماڈل'}
+                    {language === 'en' ? 'Advanced pattern signature scanning' : 'سگنیچر اسکیننگ'}
                   </div>
                 </div>
                 <div className="bg-[#0D1526] border border-slate-800/80 rounded-2xl p-5">
@@ -539,7 +453,7 @@ export default function App() {
                       {language === 'en' ? 'Website Scanner' : 'ویب سائٹ اسکینر'}
                     </h3>
                     <p className="text-sm text-slate-400 mb-4">
-                      {language === 'en' ? 'Deep heuristic and AI URL risk assessment report.' : 'یو آر ایل رسک اسسمنٹ اور ایس ایس ایل چیک۔'}
+                      {language === 'en' ? 'Deep heuristic URL risk assessment report.' : 'یو آر ایل رسک اسسمنٹ اور ایس ایس ایل چیک۔'}
                     </p>
                     <span className="text-teal-400 text-sm font-semibold flex items-center gap-1">
                       {language === 'en' ? 'Open scanner' : 'اسکینر کھولیں'} <ArrowRight className="w-4 h-4" />
@@ -551,7 +465,7 @@ export default function App() {
                       <MessageSquareWarning className="w-6 h-6" />
                     </div>
                     <h3 className="text-lg font-bold text-white mb-2">
-                      {language === 'en' ? 'Scam Message AI' : 'اسکام اے آئی تجزیہ'}
+                      {language === 'en' ? 'Threat Analyzer' : 'تھریڈ تجزیہ'}
                     </h3>
                     <p className="text-sm text-slate-400 mb-4">
                       {language === 'en' ? 'Analyze SMS, WhatsApp, or emails for social engineering tactics.' : 'ایس ایم ایس یا واٹس ایپ میسج کا اسکام ٹیسٹ کریں۔'}
@@ -569,7 +483,7 @@ export default function App() {
                       {language === 'en' ? 'Phishing Training Quiz' : 'فشنگ ٹریننگ کوئز'}
                     </h3>
                     <p className="text-sm text-slate-400 mb-4">
-                      {language === 'en' ? 'Test your threat spotting skills with interactive phishing scenarios.' : 'انٹرایکティブ سینیریوز کے ساتھ اپنی مہارت جانچیں۔'}
+                      {language === 'en' ? 'Test your threat spotting skills with interactive phishing scenarios.' : 'انٹرایکٹو سینیریوز کے ساتھ اپنی مہارت جانچیں۔'}
                     </p>
                     <span className="text-indigo-400 text-sm font-semibold flex items-center gap-1">
                       {language === 'en' ? 'Start quiz' : 'کوئز شروع کریں'} <ArrowRight className="w-4 h-4" />
@@ -592,7 +506,7 @@ export default function App() {
                 </h1>
                 <p className="text-slate-400 text-sm max-w-xl">
                   {language === 'en'
-                    ? 'Enter any website link to perform an instant heuristic and AI-powered security assessment.'
+                    ? 'Enter any website link to perform an instant heuristic security assessment.'
                     : 'کسی بھی ویب سائٹ کا لنک درج کریں تاکہ فوری سیکیورٹی تجزیہ حاصل کیا جا سکے۔'}
                 </p>
               </div>
@@ -1181,61 +1095,6 @@ export default function App() {
                   </p>
                 </div>
               </div>
-            </div>
-          )}
-
-          {/* SCAN HISTORY */}
-          {activeTab === 'history' && (
-            <div className="space-y-8">
-              <div className="space-y-2">
-                <div className="text-xs font-mono uppercase tracking-widest text-teal-400">
-                  {language === 'en' ? 'Activity Log' : 'سرگرمی کا ریکارڈ'}
-                </div>
-                <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">
-                  {language === 'en' ? 'Scan History & Reports' : 'اسکین کی تاریخچہ'}
-                </h1>
-                <p className="text-slate-400 text-sm max-w-xl">
-                  {language === 'en'
-                    ? 'Review your recent website checks and message security submissions.'
-                    : 'اپنے حالیہ اسکینز کا ریکارڈ دیکھیں۔'}
-                </p>
-              </div>
-
-              {history.length === 0 ? (
-                <div className="bg-[#0D1526] border border-slate-800 rounded-2xl p-12 text-center space-y-4">
-                  <History className="w-12 h-12 text-slate-600 mx-auto" />
-                  <div className="text-white font-semibold">
-                    {language === 'en' ? 'No scan history yet' : 'کوئی اسکین موجود نہیں'}
-                  </div>
-                  <p className="text-sm text-slate-400">
-                    {language === 'en' ? 'Run a website scan or message check to see records here.' : 'ریکارڈ دیکھنے کے لیے کوئی اسکین چلائیں۔'}
-                  </p>
-                </div>
-              ) : (
-                <div className="bg-[#0D1526] border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-                  <div className="divide-y divide-slate-800">
-                    {history.map((item) => (
-                      <div key={item.id} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-800/30 transition-colors">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-mono uppercase bg-slate-800 text-slate-300 px-2 py-0.5 rounded">
-                              {item.type}
-                            </span>
-                            <span className="text-xs text-slate-400">{item.timestamp}</span>
-                          </div>
-                          <div className="text-sm font-mono text-white font-semibold break-all">{item.target}</div>
-                          <p className="text-xs text-slate-400">{item.summary}</p>
-                        </div>
-                        <div className="flex items-center gap-3 shrink-0">
-                          <span className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider ${item.status === 'Safe' ? 'bg-teal-500/10 text-teal-400 border border-teal-500/30' : item.status === 'Suspicious' || item.status === 'Medium' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30' : 'bg-rose-500/10 text-rose-400 border border-rose-500/30'}`}>
-                            {item.status}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </main>
